@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Resuelve o Muere - PRO</title>
+
+<style>
+body{
+    margin:0;
+    background:#05070c;
+    font-family:Segoe UI;
+    color:white;
+    text-align:center;
+}
+
+h1{color:#ff4444;}
+
+.timer{
+    font-size:45px;
+    margin:10px;
+}
+
+.panel{
+    display:inline-block;
+    background:#121722;
+    padding:20px;
+    margin:15px;
+    border-radius:15px;
+    box-shadow:0 0 15px red;
+    width:220px;
+}
+
+.cable{
+    height:18px;
+    margin:8px;
+    border-radius:10px;
+    cursor:pointer;
+}
+.rojo{background:red;}
+.azul{background:blue;}
+.verde{background:lime;}
+.amarillo{background:gold;}
+
+.boton{
+    padding:12px;
+    background:#333;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.display{
+    background:black;
+    padding:10px;
+    margin-top:10px;
+    border-radius:8px;
+    font-size:25px;
+}
+
+.estado{
+    margin-top:10px;
+    font-weight:bold;
+}
+
+.ok{color:lime;}
+.fail{color:red;}
+
+</style>
+</head>
+
+<body>
+
+<h1>💣 RESUELVE O MUERE</h1>
+<div class="timer" id="timer">02:00</div>
+
+<!-- CABLES -->
+<div class="panel">
+<h2>Cables</h2>
+<div class="cable rojo" onclick="cable(1)"></div>
+<div class="cable azul" onclick="cable(2)"></div>
+<div class="cable verde" onclick="cable(3)"></div>
+<div class="cable amarillo" onclick="cable(4)"></div>
+<div id="estadoCables" class="estado">Pendiente</div>
+</div>
+
+<!-- BOTON -->
+<div class="panel">
+<h2>Botón</h2>
+<div class="boton" onclick="boton()">MANTENER</div>
+<div class="display" id="numero"></div>
+<div id="estadoBoton" class="estado">Pendiente</div>
+</div>
+
+<!-- CODIGO -->
+<div class="panel">
+<h2>Código</h2>
+<input id="codigoInput" placeholder="123">
+<button onclick="verificarCodigo()">OK</button>
+<div id="estadoCodigo" class="estado">Pendiente</div>
+</div>
+
+<h2 id="mensaje"></h2>
+
+<script>
+
+// ---------- VARIABLES ----------
+let tiempo = 120;
+let terminado=false;
+
+let cablesListo=false;
+let botonListo=false;
+let codigoListo=false;
+
+// respuestas random
+let cableCorrecto=Math.floor(Math.random()*4)+1;
+let numeroBoton=Math.floor(Math.random()*9)+1;
+document.getElementById("numero").textContent=numeroBoton;
+
+let codigoCorrecto=Math.floor(100+Math.random()*900);
+
+// ---------- TIMER ----------
+setInterval(()=>{
+ if(terminado) return;
+
+ tiempo--;
+
+ let m=Math.floor(tiempo/60);
+ let s=tiempo%60;
+
+ document.getElementById("timer").textContent=
+ String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+ if(tiempo<=15){
+   document.body.style.background="#2b0000";
+ }
+
+ if(tiempo<=0) perder();
+
+},1000);
+
+// ---------- CHECK GLOBAL ----------
+function revisarVictoria(){
+ if(cablesListo && botonListo && codigoListo){
+   terminado=true;
+   document.getElementById("mensaje").textContent="🎉 BOMBA DESACTIVADA";
+ }
+}
+
+// ---------- CABLES ----------
+function cable(n){
+ if(terminado) return;
+
+ if(n===cableCorrecto){
+   cablesListo=true;
+   estadoCables.textContent="✔ Correcto";
+   estadoCables.className="estado ok";
+   revisarVictoria();
+ }else perder();
+}
+
+// ---------- BOTON ----------
+function boton(){
+ if(terminado) return;
+
+ if(numeroBoton%2===0){
+   botonListo=true;
+   estadoBoton.textContent="✔ Correcto";
+   estadoBoton.className="estado ok";
+   revisarVictoria();
+ }else perder();
+}
+
+// ---------- CODIGO ----------
+function verificarCodigo(){
+ if(terminado) return;
+
+ let user=document.getElementById("codigoInput").value;
+
+ if(user==codigoCorrecto){
+   codigoListo=true;
+   estadoCodigo.textContent="✔ Correcto";
+   estadoCodigo.className="estado ok";
+   revisarVictoria();
+ }else perder();
+}
+
+// ---------- PERDER ----------
+function perder(){
+ terminado=true;
+ document.getElementById("mensaje").textContent="💥 EXPLOTÓ";
+ document.getElementById("mensaje").className="fail";
+}
+
+</script>
+
+</body>
+</html>
